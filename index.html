@@ -11,16 +11,16 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0D0D0D;
-      --card-bg: #111827;
-      --card-bg2: #0f172a;
+      --bg: #080B14;
+      --card-bg: rgba(17, 24, 39, 0.7);
       --purple: #7C3AED;
+      --purple-light: #A78BFA;
       --blue: #3B82F6;
       --cyan: #06B6D4;
       --text: #E2E8F0;
       --muted: #64748B;
-      --border: rgba(124, 58, 237, 0.35);
-      --glow: rgba(124, 58, 237, 0.18);
+      --border: rgba(124, 58, 237, 0.3);
+      --glow: rgba(124, 58, 237, 0.15);
     }
 
     html { scroll-behavior: smooth; }
@@ -33,16 +33,79 @@
       overflow-x: hidden;
     }
 
-    /* dot grid background */
+    /* dot grid */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(rgba(124,58,237,0.15) 1px, transparent 1px);
-      background-size: 32px 32px;
+      background-image: radial-gradient(rgba(124,58,237,0.12) 1px, transparent 1px);
+      background-size: 30px 30px;
       pointer-events: none;
       z-index: 0;
     }
+
+    /* ── SCROLL PROGRESS BAR ── */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--purple), var(--blue), var(--cyan));
+      z-index: 1000;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px rgba(124,58,237,0.7);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 3px;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      padding: 0.9rem 2rem;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-bottom 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(8, 11, 20, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(124,58,237,0.2);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--purple), var(--blue));
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover { color: var(--purple-light); }
+    .nav-links a:hover::after { width: 100%; }
 
     /* ── HERO ── */
     #hero {
@@ -55,27 +118,75 @@
       text-align: center;
       padding: 2rem;
       z-index: 1;
+      overflow: hidden;
+    }
+
+    /* animated orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      pointer-events: none;
+      animation: float-orb 12s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 400px; height: 400px;
+      background: var(--purple);
+      top: -100px; left: -100px;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 300px; height: 300px;
+      background: var(--blue);
+      bottom: -80px; right: -80px;
+      animation-delay: -4s;
+    }
+
+    .orb-3 {
+      width: 200px; height: 200px;
+      background: var(--cyan);
+      top: 50%; left: 60%;
+      animation-delay: -8s;
+      opacity: 0.2;
+    }
+
+    @keyframes float-orb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(30px, -20px) scale(1.05); }
+      66%       { transform: translate(-20px, 30px) scale(0.97); }
+    }
+
+    .hero-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--purple-light);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      opacity: 0.8;
     }
 
     .hero-prompt {
       font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(1.4rem, 4vw, 2.6rem);
+      font-size: clamp(1.3rem, 4vw, 2.4rem);
       font-weight: 700;
-      background: linear-gradient(135deg, var(--purple), var(--blue), var(--cyan));
+      background: linear-gradient(135deg, var(--purple-light), var(--blue), var(--cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       min-height: 3.5rem;
       display: flex;
       align-items: center;
-      gap: 0;
     }
 
     .cursor {
       display: inline-block;
       width: 3px;
       height: 1.1em;
-      background: var(--purple);
+      background: var(--purple-light);
       margin-left: 4px;
       animation: blink 1s step-end infinite;
       flex-shrink: 0;
@@ -84,24 +195,49 @@
 
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-    .hero-sub {
-      margin-top: 1.2rem;
-      font-size: 1rem;
-      color: var(--muted);
-      letter-spacing: 0.05em;
+    .hero-tags {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1.6rem;
     }
 
-    .hero-sub span {
+    .hero-tag {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
       color: #94A3B8;
+      background: rgba(124,58,237,0.08);
+      backdrop-filter: blur(8px);
+      letter-spacing: 0.05em;
     }
 
     .scroll-hint {
       position: absolute;
-      bottom: 2rem;
-      font-size: 0.75rem;
+      bottom: 2.5rem;
+      font-size: 0.72rem;
       color: var(--muted);
-      letter-spacing: 0.1em;
-      animation: bounce 2s infinite;
+      letter-spacing: 0.15em;
+      animation: bounce 2.2s ease-in-out infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .scroll-hint::before {
+      content: '';
+      width: 1px;
+      height: 32px;
+      background: linear-gradient(to bottom, transparent, var(--purple));
+      animation: line-grow 2.2s ease-in-out infinite;
+    }
+
+    @keyframes line-grow {
+      0%,100%{ transform: scaleY(1); opacity:0.4; }
+      50%{ transform: scaleY(1.3); opacity:1; }
     }
 
     @keyframes bounce {
@@ -110,43 +246,61 @@
     }
 
     /* ── SECTIONS ── */
-    section {
+    .content-section {
       position: relative;
       z-index: 1;
-      max-width: 900px;
+      max-width: 920px;
       margin: 0 auto;
-      padding: 5rem 1.5rem;
+      padding: 6rem 1.5rem;
     }
 
     .section-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--purple);
-      letter-spacing: 0.2em;
+      font-size: 0.72rem;
+      color: var(--purple-light);
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
+      opacity: 0.7;
     }
 
     .section-title {
       font-size: clamp(1.5rem, 3vw, 2rem);
       font-weight: 700;
-      margin-bottom: 2.5rem;
+      margin-bottom: 0.5rem;
+      position: relative;
+      display: inline-block;
     }
 
-    /* ── CARDS ── */
+    .section-title::after {
+      content: '';
+      display: block;
+      height: 3px;
+      width: 48px;
+      margin-top: 0.5rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--purple), var(--blue));
+      box-shadow: 0 0 10px rgba(124,58,237,0.5);
+    }
+
+    .section-spacer { margin-bottom: 2.5rem; }
+
+    /* ── GLASS CARD ── */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 1.8rem;
-      box-shadow: 0 0 20px var(--glow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.03) inset;
       transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     }
 
     .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 0 40px rgba(124,58,237,0.35);
-      border-color: rgba(124,58,237,0.7);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 40px rgba(124,58,237,0.3), 0 0 0 1px rgba(124,58,237,0.15) inset;
+      border-color: rgba(124,58,237,0.6);
     }
 
     /* ── ABOUT GRID ── */
@@ -156,7 +310,7 @@
       gap: 1.2rem;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .about-grid { grid-template-columns: 1fr; }
     }
 
@@ -164,15 +318,15 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(124,58,237,0.15);
-      border: 1px solid var(--purple);
+      background: rgba(124,58,237,0.12);
+      border: 1px solid rgba(124,58,237,0.6);
       border-radius: 999px;
       padding: 0.35rem 1rem;
       font-family: 'JetBrains Mono', monospace;
       font-size: 1.1rem;
       font-weight: 700;
-      color: #A78BFA;
-      box-shadow: 0 0 12px rgba(124,58,237,0.4);
+      color: var(--purple-light);
+      box-shadow: 0 0 16px rgba(124,58,237,0.35);
       margin-bottom: 1rem;
     }
 
@@ -184,46 +338,46 @@
     }
 
     .trait {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       padding: 0.25rem 0.75rem;
       border-radius: 999px;
-      border: 1px solid rgba(59,130,246,0.4);
+      border: 1px solid rgba(59,130,246,0.35);
       color: #93C5FD;
-      background: rgba(59,130,246,0.08);
+      background: rgba(59,130,246,0.07);
     }
 
     .card-icon {
       font-size: 1.8rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
 
     .card-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: #A78BFA;
-      margin-bottom: 0.4rem;
+      color: var(--purple-light);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.03em;
     }
 
     .card-desc {
-      font-size: 0.88rem;
+      font-size: 0.87rem;
       color: #94A3B8;
-      line-height: 1.7;
+      line-height: 1.75;
     }
 
     /* health bar */
     .health-label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--muted);
-      margin-bottom: 0.4rem;
-      margin-top: 1rem;
+      margin: 1rem 0 0.4rem;
       display: flex;
       justify-content: space-between;
     }
 
     .health-bar {
       width: 100%;
-      height: 8px;
-      background: rgba(255,255,255,0.08);
+      height: 6px;
+      background: rgba(255,255,255,0.06);
       border-radius: 999px;
       overflow: hidden;
     }
@@ -231,9 +385,9 @@
     .health-fill {
       height: 100%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #F59E0B, #EF4444);
-      box-shadow: 0 0 8px rgba(239,68,68,0.5);
-      transition: width 1.2s ease;
+      background: linear-gradient(90deg, #FBBF24, #EF4444);
+      box-shadow: 0 0 8px rgba(239,68,68,0.45);
+      transition: width 1.4s cubic-bezier(0.16,1,0.3,1);
     }
 
     /* ── INTERESTS ── */
@@ -243,27 +397,33 @@
       gap: 1.2rem;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .interests-grid { grid-template-columns: 1fr; }
     }
 
     .interest-card {
       text-align: center;
-      padding: 2rem 1.2rem;
+      padding: 2.2rem 1.2rem;
     }
 
     .interest-icon {
-      font-size: 2.8rem;
-      margin-bottom: 0.8rem;
+      font-size: 2.6rem;
+      margin-bottom: 0.9rem;
       display: block;
-      filter: drop-shadow(0 0 8px rgba(124,58,237,0.5));
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      filter: drop-shadow(0 0 6px rgba(124,58,237,0.4));
+    }
+
+    .interest-card:hover .interest-icon {
+      transform: translateY(-8px) scale(1.1);
+      filter: drop-shadow(0 0 14px rgba(124,58,237,0.7));
     }
 
     .interest-title {
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 1rem;
       margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, var(--purple), var(--blue));
+      background: linear-gradient(135deg, var(--purple-light), var(--blue));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -272,30 +432,31 @@
     .interest-desc {
       font-size: 0.83rem;
       color: #94A3B8;
-      line-height: 1.65;
+      line-height: 1.7;
     }
 
     /* ── STATUS TERMINAL ── */
     .terminal {
-      background: #090f1a;
-      border: 1px solid rgba(6,182,212,0.3);
-      border-radius: 12px;
+      background: rgba(5, 10, 20, 0.8);
+      border: 1px solid rgba(6,182,212,0.25);
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 0 30px rgba(6,182,212,0.1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.4), 0 0 60px rgba(6,182,212,0.06);
     }
 
     .terminal-bar {
-      background: #111827;
-      padding: 0.7rem 1rem;
+      background: rgba(17, 24, 39, 0.9);
+      padding: 0.75rem 1.2rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }
 
     .terminal-dot {
-      width: 11px;
-      height: 11px;
+      width: 11px; height: 11px;
       border-radius: 50%;
     }
 
@@ -311,24 +472,24 @@
     }
 
     .terminal-body {
-      padding: 1.5rem;
+      padding: 1.6rem 1.8rem;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      line-height: 2;
+      font-size: 0.88rem;
+      line-height: 2.1;
     }
 
-    .t-comment { color: #475569; }
+    .t-comment { color: #3F4F6A; }
     .t-key { color: #7DD3FC; }
-    .t-colon { color: #64748B; }
-    .t-string { color: #A3E635; }
-    .t-punct { color: #64748B; }
-    .t-prompt { color: var(--purple); }
+    .t-colon { color: #475569; }
+    .t-string { color: #86EFAC; }
+    .t-punct { color: #475569; }
+    .t-prompt { color: var(--purple-light); }
 
     /* ── FADE IN ── */
     .fade-up {
       opacity: 0;
-      transform: translateY(28px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
     }
 
     .fade-up.visible {
@@ -336,7 +497,6 @@
       transform: translateY(0);
     }
 
-    /* stagger children */
     .fade-up:nth-child(1) { transition-delay: 0s; }
     .fade-up:nth-child(2) { transition-delay: 0.1s; }
     .fade-up:nth-child(3) { transition-delay: 0.2s; }
@@ -346,53 +506,71 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding: 2rem;
-      font-size: 0.75rem;
+      padding: 2.5rem;
+      font-size: 0.74rem;
       color: var(--muted);
       border-top: 1px solid rgba(255,255,255,0.04);
     }
 
-    footer span {
-      color: var(--purple);
-    }
+    footer span { color: var(--purple-light); }
 
-    /* divider line */
+    /* divider */
     .divider {
       border: none;
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-      max-width: 900px;
+      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.25), transparent);
+      max-width: 920px;
       margin: 0 auto;
     }
   </style>
 </head>
 <body>
 
+  <!-- SCROLL PROGRESS -->
+  <div id="progress-bar"></div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <ul class="nav-links">
+      <li><a href="#about">// about</a></li>
+      <li><a href="#interests">// interests</a></li>
+      <li><a href="#status">// status</a></li>
+    </ul>
+  </nav>
+
   <!-- HERO -->
   <section id="hero">
-    <p class="section-label">// hello world</p>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <p class="hero-label">hello world</p>
     <div class="hero-prompt">
       <span id="typed-text"></span><span class="cursor"></span>
     </div>
-    <p class="hero-sub">
-      <span>AI Learner</span> &nbsp;·&nbsp; <span>ENTJ</span> &nbsp;·&nbsp; <span>☕ Coffee Addict</span>
-    </p>
-    <p class="scroll-hint">↓ &nbsp; scroll</p>
+    <div class="hero-tags">
+      <span class="hero-tag">🤖 AI Learner</span>
+      <span class="hero-tag">⚡ ENTJ</span>
+      <span class="hero-tag">☕ Coffee Lover</span>
+      <span class="hero-tag">🏊 수영 도전 중</span>
+    </div>
+    <div class="scroll-hint">scroll</div>
   </section>
 
   <hr class="divider" />
 
-  <!-- ABOUT ME -->
-  <section>
+  <!-- ABOUT -->
+  <section id="about" class="content-section">
     <p class="section-label">// about me</p>
-    <h2 class="section-title">나는 누구인가</h2>
+    <h2 class="section-title">나에 대해서</h2>
+    <div class="section-spacer"></div>
     <div class="about-grid">
 
       <div class="card fade-up">
         <div class="card-icon">🧠</div>
         <div class="card-title">성격 유형</div>
         <div class="entj-badge">⚡ ENTJ</div>
-        <p class="card-desc">논리적이고 목표 지향적인 리더형.<br />계획 세우는 걸 좋아하고 추진력이 강해요.</p>
+        <p class="card-desc">논리적이고 목표 지향적인 리더형.<br />계획 세우는 걸 좋아하고 한번 방향이 정해지면 끝까지 밀어붙여요.</p>
         <div class="trait-list">
           <span class="trait">리더십</span>
           <span class="trait">계획적</span>
@@ -404,7 +582,7 @@
       <div class="card fade-up">
         <div class="card-icon">🤧</div>
         <div class="card-title">현재 상태</div>
-        <p class="card-desc">지금 감기 중이에요.<br />컨디션이 베스트는 아니지만… 커피로 버티는 중!</p>
+        <p class="card-desc">지금 감기 중이에요.<br />컨디션이 베스트는 아니지만… 그래도 오늘도 커피 한 잔은 마셨어요.</p>
         <div class="health-label">
           <span>컨디션 게이지</span>
           <span>50%</span>
@@ -412,7 +590,7 @@
         <div class="health-bar">
           <div class="health-fill" id="health-fill" style="width:0%"></div>
         </div>
-        <p class="card-desc" style="margin-top:0.8rem; font-size:0.78rem;">* 평소엔 훨씬 에너지 넘침</p>
+        <p class="card-desc" style="margin-top:0.9rem; font-size:0.78rem; opacity:0.6;">* 평소엔 에너지가 훨씬 넘쳐요</p>
       </div>
 
     </div>
@@ -421,27 +599,28 @@
   <hr class="divider" />
 
   <!-- INTERESTS -->
-  <section>
+  <section id="interests" class="content-section">
     <p class="section-label">// interests</p>
     <h2 class="section-title">관심사 & 취미</h2>
+    <div class="section-spacer"></div>
     <div class="interests-grid">
 
       <div class="card interest-card fade-up">
         <span class="interest-icon">🤖</span>
         <div class="interest-title">AI 공부</div>
-        <p class="interest-desc">현재 AI 관련 강의를 수강 중이에요. 매일 새로운 개념을 배우는 중!</p>
+        <p class="interest-desc">AI 관련 강의를 수강하며 새로운 기술을 익히고 있어요. 배울수록 더 궁금해지는 분야예요.</p>
       </div>
 
       <div class="card interest-card fade-up">
         <span class="interest-icon">☕</span>
         <div class="interest-title">커피</div>
-        <p class="interest-desc">하루를 시작하는 의식 같은 것. 커피 없이는 살 수 없어요.</p>
+        <p class="interest-desc">하루의 시작을 알리는 의식 같은 것. 커피 한 잔이 있어야 비로소 준비가 된 느낌이에요.</p>
       </div>
 
       <div class="card interest-card fade-up">
         <span class="interest-icon">🏊</span>
         <div class="interest-title">수영</div>
-        <p class="interest-desc">올해 새로 시작했어요! 꾸준히 다니고 싶은데… 개인 사정이 자꾸 생기네요 😅</p>
+        <p class="interest-desc">올해 새롭게 시작했어요! 꾸준히 다니고 싶은데 개인 사정이 자꾸 생겨서… 그래도 포기는 없어요 😅</p>
       </div>
 
     </div>
@@ -450,9 +629,10 @@
   <hr class="divider" />
 
   <!-- STATUS TERMINAL -->
-  <section>
+  <section id="status" class="content-section">
     <p class="section-label">// current status</p>
     <h2 class="section-title">지금 이 순간</h2>
+    <div class="section-spacer"></div>
     <div class="terminal fade-up">
       <div class="terminal-bar">
         <div class="terminal-dot dot-red"></div>
@@ -464,28 +644,38 @@
         <div><span class="t-comment">// 오늘의 나</span></div>
         <div><span class="t-punct">{</span></div>
         <div>&nbsp;&nbsp;<span class="t-key">learning</span><span class="t-colon">:&nbsp;</span><span class="t-string">"AI 관련 강의 수강 중 📚"</span><span class="t-punct">,</span></div>
-        <div>&nbsp;&nbsp;<span class="t-key">personality</span><span class="t-colon">:&nbsp;</span><span class="t-string">"ENTJ — 목표가 생기면 달린다"</span><span class="t-punct">,</span></div>
-        <div>&nbsp;&nbsp;<span class="t-key">fuel</span><span class="t-colon">:&nbsp;</span><span class="t-string">"☕ 커피 (필수템)"</span><span class="t-punct">,</span></div>
-        <div>&nbsp;&nbsp;<span class="t-key">hobby</span><span class="t-colon">:&nbsp;</span><span class="t-string">"🏊 수영 (출석률: 노력 중...)"</span><span class="t-punct">,</span></div>
-        <div>&nbsp;&nbsp;<span class="t-key">condition</span><span class="t-colon">:&nbsp;</span><span class="t-string">"🤧 감기 중 — 곧 회복 예정"</span><span class="t-punct">,</span></div>
-        <div>&nbsp;&nbsp;<span class="t-key">status</span><span class="t-colon">:&nbsp;</span><span class="t-string">"열심히 살아가는 중 ✨"</span></div>
+        <div>&nbsp;&nbsp;<span class="t-key">personality</span><span class="t-colon">:&nbsp;</span><span class="t-string">"ENTJ — 목표가 생기면 바로 실행"</span><span class="t-punct">,</span></div>
+        <div>&nbsp;&nbsp;<span class="t-key">fuel</span><span class="t-colon">:&nbsp;</span><span class="t-string">"☕ 커피 (없으면 하루 시작 불가)"</span><span class="t-punct">,</span></div>
+        <div>&nbsp;&nbsp;<span class="t-key">hobby</span><span class="t-colon">:&nbsp;</span><span class="t-string">"🏊 수영 (출석률: 들쑥날쑥 😅)"</span><span class="t-punct">,</span></div>
+        <div>&nbsp;&nbsp;<span class="t-key">condition</span><span class="t-colon">:&nbsp;</span><span class="t-string">"🤧 감기 중 — 회복 진행 중"</span><span class="t-punct">,</span></div>
+        <div>&nbsp;&nbsp;<span class="t-key">status</span><span class="t-colon">:&nbsp;</span><span class="t-string">"그래도 오늘 하루도 열심히 ✨"</span></div>
         <div><span class="t-punct">}</span></div>
         <br />
-        <div><span class="t-prompt">>&nbsp;</span><span id="terminal-cursor" style="display:inline-block;width:8px;height:1em;background:var(--purple);animation:blink 1s step-end infinite;vertical-align:middle;"></span></div>
+        <div><span class="t-prompt">>&nbsp;</span><span style="display:inline-block;width:8px;height:0.9em;background:var(--purple-light);animation:blink 1s step-end infinite;vertical-align:middle;border-radius:1px;"></span></div>
       </div>
     </div>
   </section>
 
   <footer>
-    Made with <span>♥</span> &nbsp;·&nbsp; Powered by <span>☕ + AI</span>
+    Made with <span>♥</span> &nbsp;·&nbsp; Fueled by <span>☕</span> &nbsp;·&nbsp; Built while <span>🤧</span>
   </footer>
 
   <script>
+    // ── Scroll progress bar ──
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      document.getElementById('progress-bar').style.width = (scrolled / total * 100) + '%';
+
+      // nav bg
+      document.getElementById('nav').classList.toggle('scrolled', scrolled > 60);
+    });
+
     // ── Typing animation ──
     const phrases = [
       '> AI를 공부하는 ENTJ입니다.',
-      '> 커피와 함께 성장 중입니다.',
-      '> 수영도 배우는 중이에요 🏊',
+      '> 커피 없이는 하루가 안 시작돼요.',
+      '> 올해는 수영도 시작했어요 🏊',
     ];
     let phraseIdx = 0, charIdx = 0, deleting = false;
     const el = document.getElementById('typed-text');
@@ -496,10 +686,10 @@
         el.textContent = phrase.slice(0, ++charIdx);
         if (charIdx === phrase.length) {
           deleting = true;
-          setTimeout(type, 2200);
+          setTimeout(type, 2400);
           return;
         }
-        setTimeout(type, 60);
+        setTimeout(type, 58);
       } else {
         el.textContent = phrase.slice(0, --charIdx);
         if (charIdx === 0) {
@@ -508,26 +698,25 @@
           setTimeout(type, 400);
           return;
         }
-        setTimeout(type, 35);
+        setTimeout(type, 32);
       }
     }
-    setTimeout(type, 500);
+    setTimeout(type, 600);
 
     // ── IntersectionObserver fade-in ──
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          // animate health bar when it becomes visible
           if (entry.target.querySelector('#health-fill')) {
             setTimeout(() => {
               document.getElementById('health-fill').style.width = '50%';
-            }, 200);
+            }, 300);
           }
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.12 });
 
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   </script>
